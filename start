@@ -1,4 +1,4 @@
 #!/bin/bash
 # My first script
 
-python3 ../pi/Adafruit_Python_CharLCD/examples/char_lcd.py
+python3 char_lcd.py
