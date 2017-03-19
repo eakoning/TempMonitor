@@ -68,6 +68,8 @@ def demo:
     # Turn backlight on.
     lcd.set_backlight(1)
 
+lcd.clear()
+
 while True:
     text = input("Voer wat in")
     lcd.clear()
