@@ -2,6 +2,7 @@
 # Example using a character LCD connected to a Raspberry Pi or BeagleBone Black.
 import time
 import Adafruit_CharLCD as LCD
+import LCDWriter
 
 # Raspberry Pi pin configuration:
 lcd_rs = 25  # Note this might need to be changed to 21 for older revision Pi's.
@@ -70,8 +71,10 @@ def demo():
 
 lcd.clear()
 
+lcdWriter = LCDWriter()
+
 while True:
     text = input("Voer wat in")
-    lcd.clear()
-    lcd.message(text)
-    time.sleep(2)
+    if not text:
+        lcdWriter.writeMessage()
+        time.sleep(0.2)
