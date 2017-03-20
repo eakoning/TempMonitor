@@ -5,22 +5,24 @@ import time
 os.system('modprobe w1-gpio')
 os.system('modprobe w1-therm')
 
-base_dir = '/sys/bus/w1/devices/'
-device_folder = glob.glob(base_dir + '28*')[0]
-device_file = device_folder + '/w1_slave'
+def determine_sensor_paths():
+    sensor_folder_pattern = "28-00000*"
+    devices_base_dir = "/sys/bus/w1/devices/"
+    sensor_path_glob = os.path.join(devices_base_dir, sensor_folder_pattern)
+    return list(map(lambda p: os.path.join(sensor_path_glob, "w1_slave")))
 
-def read_temp_raw():
-    f = open(device_file, 'r')
+def get_file_contents(path):
+    f = open(path, 'r')
     lines = f.readlines()
     f.close()
     return lines
 
-def read_temp():
-    lines = read_temp_raw()
+def read_temperature(path):
+    lines = get_file_contents(path)
 
     while lines[0].strip()[-3:] != 'YES':
         time.sleep(0.2)
-        lines = read_temp_raw()
+        lines = get_file_contents(path)
 
     equals_pos = lines[1].find('t=')
     if equals_pos != -1:
@@ -29,6 +31,9 @@ def read_temp():
         temp_f = temp_c * 9.0 / 5.0 + 32.0
         return temp_c, temp_f
 
+sensor_paths = determine_sensor_paths()
+
 while True:
-    print(read_temp())
-    time.sleep(1)
+    for path in sensor_paths:
+        print("%s %s" % path, read_temperature(path))
+        time.sleep(1)
